@@ -1,0 +1,23 @@
+FROM ubuntu:xenial
+MAINTAINER Dale Avery <dale.dale.avery@gmail.com>
+
+# Install dependencies
+ENV TERM=xterm
+RUN apt update ; apt install -y curl wget linux-image-extra-$(uname -r) linux-image-extra-virtual apt-transport-https ca-certificates
+RUN curl -fsSL https://yum.dockerproject.org/gpg | apt-key add - ; apt install -y software-properties-common
+RUN add-apt-repository "deb https://apt.dockerproject.org/repo/ ubuntu-$(lsb_release -cs) main" ; apt update
+
+# Install Docker and Compose
+RUN apt install -y docker-engine docker-compose
+
+# Install golang
+WORKDIR /root/
+RUN wget https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz ; tar -xvf go1.7.4.linux-amd64.tar.gz ; mv go /usr/local ; mkdir /gopath/
+ENV GOROOT=/usr/local/go
+ENV GOPATH=/gopath/
+ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+
+# Install handy developer tools
+RUN apt install -y build-essential
+
+CMD bash
